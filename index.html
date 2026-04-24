@@ -5,105 +5,142 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SGX Justas</title>
     <style>
+        /* Fuente futurista/arcade */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
         :root {
             --primary: #008f39; /* Verde Mayagüez */
             --dark: #121212;
             --card: #1e1e1e;
             --text: #f4f4f4;
             --accent: #FDCC0D; /* SGX Yellow */
+            --glass: rgba(10, 10, 12, 0.85); /* Vidrio esmerilado */
         }
         
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
         
-        /* TRUCO DE ARQUITECTURA: Fondo negro global, la app es una columna central en Desktop */
-        body { background-color: #050505; color: var(--text); overflow-x: hidden; display: flex; justify-content: center; }
+        body { 
+            background-color: #050505; color: var(--text); overflow-x: hidden; 
+            display: flex; justify-content: center; 
+        }
         
         /* EL CONTENEDOR EMULADOR MÓVIL */
         #app-container {
             width: 100%;
-            max-width: 480px; /* Ancho de un teléfono Pro Max */
-            background-color: var(--dark);
+            max-width: 480px; 
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             position: relative;
-            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            /* Añadido radial gradient para simular profundidad detrás del glassmorphism */
+            background: radial-gradient(circle at center, #151515 0%, #050505 100%);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
         }
 
-        /* HEADER FIXO */
+        .cyber-font { font-family: 'Orbitron', sans-serif; }
+
+        /* HEADER ESTILO HUD */
         header {
-            background: linear-gradient(135deg, #000, var(--primary));
-            padding: 20px; text-align: center; border-bottom: 3px solid var(--accent);
-            position: sticky; top: 0; z-index: 100;
+            padding: 20px 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%);
+            text-align: center; z-index: 100;
         }
-        header h1 { font-size: 26px; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; }
+        header h1 { 
+            font-size: 22px; margin: 0; text-shadow: 0 2px 10px var(--primary); 
+            color: var(--primary); text-transform: uppercase; letter-spacing: 1px;
+        }
         
-        /* CONTENEDOR DE VISTAS */
-        .view-container { display: none; padding: 20px; width: 100%; animation: fadeIn 0.3s ease-in-out; flex: 1; }
-        .view-active { display: flex; flex-direction: column; gap: 15px; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* TARJETAS Y BOTONES */
-        .card {
-            background: var(--card); border-radius: 12px; padding: 20px;
-            border-left: 4px solid var(--primary); cursor: pointer; transition: 0.2s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-            text-decoration: none; color: var(--text); display: block;
+        /* CONTENEDOR DE VISTAS Y ANIMACIÓN */
+        .view-container { 
+            display: none; padding: 20px; width: 100%; flex: 1; 
         }
-        .card:hover { background: #252525; }
-        .card:active { transform: scale(0.98); }
-        .card-title { font-size: 18px; font-weight: bold; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+        .view-active { 
+            display: flex; flex-direction: column; gap: 15px; 
+            animation: fadeIn 0.3s ease-out; 
+        }
+
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: scale(0.98); } 
+            to { opacity: 1; transform: scale(1); } 
+        }
+
+        h2 { 
+            font-size: 18px; margin: 10px 0 20px 0; color: #fff; 
+            text-align: center; text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        /* TARJETAS ESTILO CYBER */
+        .card {
+            background: rgba(0,0,0,0.7); border-radius: 12px; padding: 20px;
+            border-left: 4px solid var(--primary); cursor: pointer; transition: 0.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            text-decoration: none; color: var(--text); display: block;
+            backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+        }
+        .card:hover { background: rgba(0, 143, 57, 0.1); }
+        .card:active { transform: scale(0.98); background: #222; }
+        .card-title { font-size: 18px; font-weight: bold; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; color: #fff; }
         .card-desc { font-size: 13px; color: #aaa; line-height: 1.4; }
         
-        .badge { background: var(--accent); color: #000; font-size: 11px; padding: 3px 8px; border-radius: 10px; font-weight: bold; text-transform: uppercase; }
+        .badge { background: var(--primary); color: #000; font-size: 11px; padding: 3px 8px; border-radius: 10px; font-weight: bold; text-transform: uppercase; }
 
+        /* BOTONES DE ACCIÓN (Estilo Arcade) */
         .btn-action {
-            display: block; width: 100%; background: transparent; color: var(--text);
-            border: 1px solid var(--primary); padding: 12px; border-radius: 8px;
-            text-align: center; font-weight: 600; text-decoration: none; margin-top: 10px;
-            transition: 0.2s; cursor: pointer;
+            display: block; width: 100%; padding: 18px; margin-top: 10px; 
+            background: transparent; border: 2px solid var(--primary); color: var(--primary); 
+            border-radius: 8px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; 
+            cursor: pointer; transition: 0.2s; box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            text-decoration: none; text-align: center;
         }
-        .btn-action:hover { background: rgba(0, 143, 57, 0.1); }
-        .btn-action.secondary { border-color: #555; }
-        .btn-action.secondary:hover { background: rgba(255, 255, 255, 0.05); }
-        .btn-back { margin-bottom: 10px; display: inline-block; color: var(--accent); cursor: pointer; font-weight: bold; padding: 5px 0; }
+        .btn-action:hover { background: var(--primary); color: #000; box-shadow: 0 0 20px rgba(0,143,57,0.4); }
+        .btn-action:active { transform: scale(0.96); }
+        
+        .btn-action.secondary { border-color: #555; color: #aaa; box-shadow: none; }
+        .btn-action.secondary:hover { background: #555; color: #fff; }
+
+        .btn-back { 
+            border: none; background: transparent; color: #888; font-size: 12px; 
+            padding: 10px; margin-bottom: 10px; cursor: pointer; text-transform: uppercase; 
+            letter-spacing: 1px; transition: 0.2s; display: inline-block;
+        }
+        .btn-back:hover { color: var(--primary); }
+        .btn-back:active { transform: scale(0.96); }
 
         /* LISTAS DE INFO (Parking/Venues) */
-        .info-list-item { background: #252525; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #333; transition: 0.2s; }
-        .info-list-item:hover { border-color: #555; }
-        .info-list-item h3 { font-size: 16px; margin-bottom: 5px; color: var(--accent); }
-        .info-list-item p { font-size: 13px; color: #ddd; margin-bottom: 10px; line-height: 1.4; }
+        .info-list-item { 
+            background: rgba(0,0,0,0.7); padding: 15px; border-radius: 8px; margin-bottom: 10px; 
+            border: 1px solid #333; transition: 0.2s; backdrop-filter: blur(5px);
+        }
+        .info-list-item:hover { border-color: var(--primary); box-shadow: 0 0 15px rgba(0,143,57,0.2); }
+        .info-list-item h3 { font-size: 16px; margin-bottom: 5px; color: #fff; }
+        .info-list-item p { font-size: 13px; color: #aaa; margin-bottom: 10px; line-height: 1.4; }
         
         /* 360 IFRAME CONTAINER */
-        .iframe-container { width: 100%; height: 350px; border-radius: 12px; overflow: hidden; border: 2px solid #333; margin-top: 10px; background: #000; }
+        .iframe-container { 
+            width: 100%; height: 350px; border-radius: 12px; overflow: hidden; 
+            border: 2px solid var(--primary); margin-top: 10px; background: #000; 
+            box-shadow: 0 0 20px rgba(0,143,57,0.2);
+        }
         .iframe-container iframe { width: 100%; height: 100%; border: none; }
         
         .venue-meta { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
 
-        /* FOOTER DE ALTO IMPACTO */
+        /* FOOTER HUD ESTILO */
         .footer {
-            background: #0a0a0a;
-            padding: 20px;
-            text-align: center;
-            font-size: 12px;
-            color: #888;
-            border-top: 2px solid #222;
+            padding: 15px 0;
+            background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, transparent 100%);
+            text-align: center; z-index: 100; font-size: 10px; color: #888;
+            font-weight: bold; letter-spacing: 1px; text-transform: uppercase;
             margin-top: auto;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            line-height: 1.8;
         }
-        .footer strong { color: var(--text); font-weight: bold; }
-        .footer .brand-sgx { color: var(--accent); font-size: 14px; }
-        .footer .brand-sm { color: var(--primary); font-size: 14px;}
+        .footer span { color: var(--primary); }
     </style>
 </head>
 <body>
 
     <div id="app-container">
         <header>
-            <h1>SGX Justas</h1>
+            <h1 class="cyber-font">SGX Justas</h1>
         </header>
 
         <main id="view-main" class="view-container view-active">
@@ -114,19 +151,19 @@
             </a>
 
             <a href="https://spatialgineers.github.io/justastribu/" class="card" style="border-left-color: var(--accent);">
-                <div class="card-title">Efectos AR <span class="badge">Cámara</span></div>
+                <div class="card-title">Efectos AR <span class="badge" style="background: var(--accent);">Cámara</span></div>
                 <div class="card-desc">Usa el filtro inmersivo Sangre Verde directamente en tu cámara.</div>
             </a>
 
             <div class="card" onclick="switchView('view-info')">
-                <div class="card-title">Información del Evento <span class="badge">Guía</span></div>
+                <div class="card-title">Info del Evento <span class="badge">Guía</span></div>
                 <div class="card-desc">Explora los venues en 360º, mapas de estacionamiento y planes de seguridad.</div>
             </div>
         </main>
 
         <section id="view-info" class="view-container">
             <div class="btn-back" onclick="switchView('view-main')">← Volver al Inicio</div>
-            <h2>Logística y Accesos</h2>
+            <h2 class="cyber-font">Logística y Accesos</h2>
             
             <div class="card" onclick="switchView('view-parkings')">
                 <div class="card-title">Estacionamientos Públicos</div>
@@ -141,56 +178,58 @@
 
         <section id="view-parkings" class="view-container">
             <div class="btn-back" onclick="switchView('view-info')">← Volver a Información</div>
-            <h2>Estacionamientos</h2>
+            <h2 class="cyber-font">Estacionamientos</h2>
 
             <div class="info-list-item">
-                <h3>Palacio de Recreación</h3>
+                <h3 class="cyber-font">Palacio de Recreación</h3>
                 <p><strong>Capacidad:</strong> 500 espacios<br><strong>Costo:</strong> $5.00 Todo el día</p>
-                <a href="https://maps.google.com/?q=Palacio+de+Recreacion+y+Deportes+Mayaguez" target="_blank" class="btn-action">Navegar con Google Maps</a>
+                <a href="https://maps.google.com/?q=Palacio+de+Recreacion+y+Deportes+Mayaguez" target="_blank" class="btn-action">GPS (Google Maps)</a>
             </div>
 
             <div class="info-list-item">
-                <h3>Estacionamiento UPRM (Pista)</h3>
+                <h3 class="cyber-font">Estacionamiento UPRM</h3>
                 <p><strong>Capacidad:</strong> 1,200 espacios<br><strong>Costo:</strong> Gratis con ID Estudiantil</p>
-                <a href="https://maps.google.com/?q=UPRM+Mayaguez" target="_blank" class="btn-action">Navegar con Google Maps</a>
+                <a href="https://maps.google.com/?q=UPRM+Mayaguez" target="_blank" class="btn-action">GPS (Google Maps)</a>
             </div>
         </section>
 
         <section id="view-venues" class="view-container">
             <div class="btn-back" onclick="switchView('view-info')">← Volver a Información</div>
-            <h2>Venues Oficiales</h2>
+            <h2 class="cyber-font">Venues Oficiales</h2>
 
             <div class="info-list-item" onclick="loadVenue('palacio')" style="cursor: pointer;">
-                <h3>Palacio de Recreación y Deportes</h3>
+                <h3 class="cyber-font">Palacio de Deportes</h3>
                 <p>Sede de Baloncesto y Voleibol. Toca para ver ubicación, reglas y explorarlo en 360º.</p>
             </div>
 
             <div class="info-list-item" onclick="loadVenue('centroamericano')" style="cursor: pointer;">
-                <h3>Estadio Centroamericano</h3>
+                <h3 class="cyber-font">Estadio Centroamericano</h3>
                 <p>Sede de Atletismo. Toca para ver ubicación, reglas y explorarlo en 360º.</p>
             </div>
         </section>
 
         <section id="view-venue-detail" class="view-container">
             <div class="btn-back" onclick="switchView('view-venues')">← Volver a Venues</div>
-            <h2 id="vd-title">Nombre del Venue</h2>
+            <h2 id="vd-title" class="cyber-font">Nombre del Venue</h2>
             
             <div class="venue-meta">
-                <a id="vd-map" href="#" target="_blank" class="btn-action">Ubicación GPS (Google Maps)</a>
+                <a id="vd-map" href="#" target="_blank" class="btn-action">Ubicación GPS</a>
                 <a id="vd-pdf" href="#" target="_blank" class="btn-action secondary">Plan de Seguridad (PDF)</a>
             </div>
 
             <div class="iframe-container">
                 <iframe id="sgx-360-frame" srcdoc="" allow="xr-spatial-tracking; vr; gyroscope; accelerometer" allowfullscreen scrolling="no"></iframe>
             </div>
-            <p style="font-size: 11px; text-align: center; color: #888; margin-top: 5px;">Arrastra para explorar. Toca el icono de gafas para VR.</p>
+            <p style="font-size: 11px; text-align: center; color: #888; margin-top: 5px;">Arrastra para explorar. Toca las gafas para VR.</p>
         </section>
 
         <div class="footer">
-            Powered by <strong class="brand-sgx">Spatialgineers</strong><br>
-            in collaboration with <strong class="brand-sm">Somos Mayagüez</strong>
+            Powered by <span>Spatialgineers</span><br>
+            in collaboration with <span>Somos Mayagüez</span>
         </div>
-    </div> <script>
+    </div> 
+    
+    <script>
         // Data Base Estática
         const venueData = {
             'palacio': {
