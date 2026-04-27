@@ -106,6 +106,16 @@
         .btn-back:hover { color: var(--primary); }
         .btn-back:active { transform: scale(0.96); }
 
+        /* MAPA DE ESTACIONAMIENTOS */
+        .parking-map-img {
+            width: 100%;
+            border-radius: 12px;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 15px rgba(0,143,57,0.2);
+            margin-bottom: 5px;
+            display: block;
+        }
+
         /* LISTAS DE INFO (Parking/Venues) */
         .info-list-item { 
             background: rgba(0,0,0,0.7); padding: 15px; border-radius: 8px; margin-bottom: 10px; 
@@ -180,16 +190,24 @@
             <div class="btn-back" onclick="switchView('view-info')">← Volver a Información</div>
             <h2 class="cyber-font">Estacionamientos</h2>
 
+            <img src="https://static.wixstatic.com/media/fe81a7_709141a76175477ca5699b1c9730dcfc~mv2.jpg" alt="Mapa y Horarios de Estacionamientos" class="parking-map-img">
+
             <div class="info-list-item">
                 <h3 class="cyber-font">Palacio de Recreación</h3>
-                <p><strong>Capacidad:</strong> 500 espacios<br><strong>Costo:</strong> $5.00 Todo el día</p>
+                <p><strong>Detalles:</strong> Consulta el mapa para horarios.</p>
                 <a href="https://maps.google.com/?q=Palacio+de+Recreacion+y+Deportes+Mayaguez" target="_blank" class="btn-action">GPS (Google Maps)</a>
             </div>
 
             <div class="info-list-item">
                 <h3 class="cyber-font">Estacionamiento UPRM</h3>
-                <p><strong>Capacidad:</strong> 1,200 espacios<br><strong>Costo:</strong> Gratis con ID Estudiantil</p>
+                <p><strong>Detalles:</strong> Consulta el mapa para horarios.</p>
                 <a href="https://maps.google.com/?q=UPRM+Mayaguez" target="_blank" class="btn-action">GPS (Google Maps)</a>
+            </div>
+
+            <div class="info-list-item">
+                <h3 class="cyber-font">Administración UPRM</h3>
+                <p><strong>Detalles:</strong> Consulta el mapa para horarios.</p>
+                <a href="https://maps.google.com/?q=Estadio+Centroamericano+Jose+Figueroa+Freyre" target="_blank" class="btn-action">GPS (Google Maps)</a>
             </div>
         </section>
 
