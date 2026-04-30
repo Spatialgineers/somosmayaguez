@@ -167,7 +167,7 @@
 
             <div class="card" onclick="switchView('view-info')">
                 <div class="card-title">Info del Evento <span class="badge">Guía</span></div>
-                <div class="card-desc">Explora los venues en 360º, mapas de estacionamiento y planes de seguridad.</div>
+                <div class="card-desc">Explora los venues en 360º y mapas de estacionamiento.</div>
             </div>
         </main>
 
@@ -190,24 +190,16 @@
             <div class="btn-back" onclick="switchView('view-info')">← Volver a Información</div>
             <h2 class="cyber-font">Estacionamientos</h2>
 
-            <img src="https://static.wixstatic.com/media/fe81a7_709141a76175477ca5699b1c9730dcfc~mv2.jpg" alt="Mapa y Horarios de Estacionamientos" class="parking-map-img">
-
             <div class="info-list-item">
                 <h3 class="cyber-font">Palacio de Recreación</h3>
-                <p><strong>Detalles:</strong> Consulta el mapa para horarios.</p>
+                <p><strong>Capacidad:</strong> 500 espacios<br><strong>Costo:</strong> $5.00 Todo el día</p>
                 <a href="https://maps.google.com/?q=Palacio+de+Recreacion+y+Deportes+Mayaguez" target="_blank" class="btn-action">GPS (Google Maps)</a>
             </div>
 
             <div class="info-list-item">
-                <h3 class="cyber-font">Estacionamiento UPRM</h3>
-                <p><strong>Detalles:</strong> Consulta el mapa para horarios.</p>
+                <h3 class="cyber-font">Edificio de Biología UPRM</h3>
+                <p><strong>Detalles:</strong> Estacionamiento disponible</p>
                 <a href="https://maps.google.com/?q=UPRM+Mayaguez" target="_blank" class="btn-action">GPS (Google Maps)</a>
-            </div>
-
-            <div class="info-list-item">
-                <h3 class="cyber-font">Administración UPRM</h3>
-                <p><strong>Detalles:</strong> Consulta el mapa para horarios.</p>
-                <a href="https://www.google.com/maps/place/Administraci%C3%B3n+de+Empresas+-+Oficina+de+Asuntos+Estudiantiles/@18.2172808,-67.1608494,15z/data=!3m1!4b1!4m6!3m5!1s0x8c02b22d29fb6d5b:0xa3142c36e4552445!8m2!3d18.2172817!4d-67.1424168!16s%2Fg%2F1hdzdpdgh?entry=ttu&g_ep=EgoyMDI2MDQyMi4wIKXMDSoASAFQAw%3D%3D" target="_blank" class="btn-action">GPS (Google Maps)</a>
             </div>
         </section>
 
@@ -232,8 +224,7 @@
             
             <div class="venue-meta">
                 <a id="vd-map" href="#" target="_blank" class="btn-action">Ubicación GPS</a>
-                <a id="vd-pdf" href="#" target="_blank" class="btn-action secondary">Plan de Seguridad (PDF)</a>
-            </div>
+                </div>
 
             <div class="iframe-container">
                 <iframe id="sgx-360-frame" srcdoc="" allow="xr-spatial-tracking; vr; gyroscope; accelerometer" allowfullscreen scrolling="no"></iframe>
@@ -252,13 +243,11 @@
         const venueData = {
             'palacio': {
                 title: 'Palacio de Recreación',
-                pdf: 'seguridad_palacio.pdf',
                 mapUrl: 'https://maps.google.com/?q=Palacio+de+Recreacion+y+Deportes+Mayaguez',
                 img360: 'https://static.wixstatic.com/media/fe81a7_2edfd9f0e54d4d818747de8ea85b6229~mv2.jpg' 
             },
             'centroamericano': {
                 title: 'Estadio Centroamericano',
-                pdf: 'seguridad_estadio.pdf',
                 mapUrl: 'https://maps.google.com/?q=Estadio+Centroamericano+Jose+Figueroa+Freyre',
                 img360: 'https://static.wixstatic.com/media/fe81a7_48d17aa4bbf0487fa67668d3bf054499~mv2.jpg' 
             }
@@ -282,8 +271,8 @@
         function loadVenue(venueId) {
             const data = venueData[venueId];
             document.getElementById('vd-title').innerText = data.title;
-            document.getElementById('vd-pdf').href = data.pdf;
             document.getElementById('vd-map').href = data.mapUrl;
+            // Se removió la inyección del PDF
             
             const aframeCode = `
                 <!DOCTYPE html>
